@@ -1,20 +1,47 @@
 # Sintaxiando Ando
 
-Guía de estudio de **Sintaxis y Semántica de los Lenguajes** (UTN FRT, 2026).
+Guía de estudio interactiva de **Sintaxis y Semántica de los Lenguajes** (UTN Facultad Regional Tucumán, ciclo 2026).
 
-- Teoría de las 4 unidades con las definiciones de la cátedra.
-- Gráficos y simuladores paso a paso: AFD, AFND, AF-λ, MEF de Mealy y Moore, autómatas de pila, máquinas de Turing y el ascensor del Laboratorio 1.
-- Defensas de TP: enunciados de "Problemas a resolver por los alumnos" con tiempo y resolución.
-- Cartas de laboratorio con un minuto por carta (Lab 1, Lab 2 y GCC).
-- Simulacros de parcial con la estructura del Tema C del primer parcial 2026, y el Tema C resuelto.
-- Control de lectura al final de cada unidad.
+**Sitio:** https://ggr14.github.io/sintaxiando-ando/
+
+## Qué es
+
+Es una página web pensada para preparar la materia tal como se evalúa este año: defensas de trabajos prácticos, laboratorios con cartas y parciales con teoría estilo verdadero o falso. Reúne la teoría de las clases, ejercicios resueltos y herramientas para practicar con tiempo, todo en un mismo lugar.
+
+El contenido está organizado igual que la materia:
+
+- **Primer parcial:** Unidad 1 (lingüística matemática) y Unidad 2 (lenguajes regulares y autómatas finitos), más el Laboratorio 1.
+- **Segundo parcial:** Unidad 3 (gramáticas independientes del contexto y autómatas de pila) y Unidad 4 (máquinas de Turing y modelos generales), más el Laboratorio 2.
+
+## Qué incluye
+
+- **Teoría por unidad**, con las definiciones tal como las presenta la cátedra (que es como aparecen en los verdadero o falso), tablas comparativas y notas sobre las trampas más comunes.
+- **Gráficos y simuladores paso a paso**: autómatas finitos deterministas y no deterministas, AF-λ, máquinas de Mealy y Moore, autómatas de pila y máquinas de Turing. Se escribe una palabra y se ve cómo se mueve el cabezal, cómo cambian los estados y cómo se llena la pila, con la secuencia de configuración en la notación de la cátedra. También hay árboles de derivación y diagramas de sintaxis.
+- **Laboratorios**: la teoría de cada enunciado (MEF del ascensor con Arduino, parser de SQL con JLex y Cup, proceso de compilación con GCC) y un simulador del ascensor con la tabla de transición y el display de 7 segmentos.
+- **Cartas de laboratorio**: un simulador de la evaluación con preguntas de opción múltiple y un minuto por carta. Al final muestra el puntaje y repasa las que se fallaron.
+- **Defensas de TP**: sale al azar un enunciado de la parte "Problemas a resolver por los alumnos", con reloj, y después se compara con la resolución.
+- **Simulacros de parcial** con la misma estructura y puntaje que el primer parcial 2026 (Tema C). Cada simulacro es un tema distinto, armado al azar. Además está el Tema C resuelto.
+- **Control de lectura** al final de cada unidad, con preguntas de teoría y de práctica.
+
+El progreso (secciones leídas, controles aprobados y mejor puntaje en cartas) se guarda en el navegador de cada persona.
+
+Las resoluciones de los ejercicios para alumnos son propias y están marcadas como sugeridas; muchas se verificaron con programas (minimizaciones, gramáticas, autómatas de pila y máquinas de Turing). Ante cualquier duda, manda el criterio de la cátedra.
+
+## Agradecimientos
+
+A **Franco Martinez Soria**, por la idea de crear artifacts de estudio para las materias de la UTN FRT. Sus guías fueron la inspiración y el modelo para esta:
+
+- [Backeando Ando](https://franco704.github.io/backeando-ando/) · Desarrollo de Software
+- [Iterando Ando](https://franco704.github.io/iterando-ando/) · Matemática Superior
+- [Economizar](https://franco704.github.io/economizar/) · Economía
+- [Diseñando Ando](https://franco704.github.io/disenando-ando/) · Diseño de Sistemas de Información
+
+Y a la cátedra de Sintaxis y Semántica de los Lenguajes (Ing. Jorge Buabud), cuyo material de clases y trabajos prácticos es la base de todo el contenido.
 
 ## Cómo se arma
 
-El sitio es un solo `index.html` autocontenido. Las fuentes están en `src/` (estilos, motor y datos por unidad) y se combinan con:
+El sitio es un único `index.html` autocontenido. Las fuentes están en `src/` (estilos, motor y datos de cada unidad, laboratorio y parcial) y se combinan con:
 
 ```
 python3 build.py
 ```
-
-Para publicarlo con GitHub Pages: Settings → Pages → Deploy from a branch → `main` / root.

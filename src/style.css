@@ -393,3 +393,22 @@ label.inline { display: inline-flex; gap: 6px; align-items: center; font-size: 0
 .copt .ol { font-family: var(--f-mono); font-size: 0.8rem; font-weight: 600; min-width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; flex: none; }
 .copt.is-right .ol { border-color: var(--ok); color: var(--ok); }
 .copt.is-wrong .ol { border-color: var(--bad); color: var(--bad); }
+
+/* práctica con dibujo */
+.ed .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.edhint { font-size: .9rem; color: var(--muted); min-height: 3em; }
+.edhint code { font-family: "JetBrains Mono", monospace; font-size: .85em; background: var(--surface); padding: 0 4px; border-radius: 3px; }
+.edcanvas { background: var(--paper); border: 1px dashed var(--line); border-radius: 6px; padding: 4px; cursor: crosshair; user-select: none; -webkit-user-select: none; }
+.edcanvas svg { display: block; max-width: 100%; height: auto; touch-action: pan-x pan-y; }
+.edcanvas.drag svg { touch-action: none; }
+.edrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.edrow .k { font-weight: 600; font-size: .9rem; }
+.edrow .sym { display: inline-flex; gap: 4px; }
+.edrow .sym .btn { min-width: 36px; padding-left: 8px; padding-right: 8px; }
+.edok { border-left: 4px solid var(--ok, #2f8f4e); }
+.edbad { border-left: 4px solid var(--bad, #c0392b); }
+.edbad ul, .edok ul { margin: 6px 0 0 18px; }
+.exchip { text-decoration: none; color: inherit; }
+.exchip.on { outline: 2px solid var(--accent); }
+
+@media (max-width: 640px) { .edhint { min-height: 7.5em; } .edcanvas { overflow-x: auto; } .edcanvas svg { width: 600px !important; max-width: none; } }

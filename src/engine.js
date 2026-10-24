@@ -466,7 +466,7 @@
     }
     var h = '<div class="page solo"><div class="main">';
     h += '<div class="hero"><div class="head"><div class="kicker">Sintaxis y Semántica de los Lenguajes · UTN FRT · 2026</div><h1>Sintaxiando <em>Ando</em></h1><p class="lede">Teoría con las definiciones tal cual las toma la cátedra, gráficos de autómatas y cintas que se mueven, defensas de TP, cartas de laboratorio con tiempo y simulacros con el formato del parcial de este año.</p>' +
-      '<div class="btns"><a class="btn pri" href="#cartas">Rendir cartas de laboratorio</a><a class="btn" href="#simulacro">Simulacro de parcial</a><a class="btn ghost" href="#modelo">Parcial 2026 resuelto</a></div></div>' +
+      '<div class="btns"><a class="btn pri" href="#cartas">Rendir cartas de laboratorio</a><a class="btn" href="#simulacro">Simulacro de parcial</a><a class="btn" href="#practica">Dibujar y corregir autómatas</a><a class="btn ghost" href="#modelo">Parcial 2026 resuelto</a></div></div>' +
       '<div class="demo"><div data-sim="hero-afd"></div></div></div>';
     h += '<section class="sec"><h2>Primer parcial</h2><p class="lede" style="font-size:1rem">Unidades 1 y 2, teoría y práctica. Laboratorio 1: MEF del ascensor con Arduino.</p><div class="grid2">' + unitIdx(u[0]) + unitIdx(u[1]) + "</div></section>";
     h += '<section class="sec"><h2>Segundo parcial</h2><p class="lede" style="font-size:1rem">Unidades 3 y 4, teoría y práctica. Laboratorio 2: parser de SQL con JLex y Cup.</p><div class="grid2">' + unitIdx(u[2]) + unitIdx(u[3]) + "</div></section>";
@@ -668,6 +668,7 @@
     if (base === "defensas") return pageDefensas();
     if (base === "simulacro") return pageSimulacro();
     if (base === "modelo") return pageModelo();
+    if (base === "practica" && SSL.pagePractica) { SSL.pagePractica(h.slice(9)); window.scrollTo(0, 0); return; }
     pageHome(); window.scrollTo(0, 0);
   }
   SSL.start = function () {
@@ -676,5 +677,5 @@
     window.addEventListener("hashchange", route);
     route();
   };
-  SSL.util = { drawFA: drawFA, drawTree: drawTree, parseTree: parseTree, rr: rr, tapeHTML: tapeHTML, stackHTML: stackHTML, blocks: blocks, esc: esc, shuffle: shuffle, pick: pick, $: $, $$: $$ };
+  SSL.util = { drawFA: drawFA, drawTree: drawTree, parseTree: parseTree, rr: rr, tapeHTML: tapeHTML, stackHTML: stackHTML, blocks: blocks, pageList: pageList, mountSims: mountSims, esc: esc, shuffle: shuffle, pick: pick, $: $, $$: $$ };
 })();

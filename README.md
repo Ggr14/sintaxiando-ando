@@ -29,12 +29,14 @@ Las resoluciones de los ejercicios para alumnos son propias y están marcadas co
 
 ## Agradecimientos
 
-A **Franco Martinez Soria**, por la idea de crear artifacts de estudio para las materias de la UTN FRT. Sus guías fueron la inspiración y el modelo para esta:
+A **Franco Martinez Soria**, por la idea de crear artifacts de estudio para las materias de la UTN FRT.
 
-- [Backeando Ando](https://franco704.github.io/backeando-ando/) · Desarrollo de Software
-- [Iterando Ando](https://franco704.github.io/iterando-ando/) · Matemática Superior
-- [Economizar](https://franco704.github.io/economizar/) · Economía
-- [Diseñando Ando](https://franco704.github.io/disenando-ando/) · Diseño de Sistemas de Información
+Franco es el autor de varias guías de este estilo para otras materias, que fueron la inspiración para esta. Si cursás alguna de ellas, te recomiendo visitarlas:
+
+- [Backeando Ando](https://franco704.github.io/backeando-ando/) (de Franco) · Desarrollo de Software
+- [Iterando Ando](https://franco704.github.io/iterando-ando/) (de Franco) · Matemática Superior
+- [Economizar](https://franco704.github.io/economizar/) (de Franco) · Economía
+- [Diseñando Ando](https://franco704.github.io/disenando-ando/) (de Franco) · Diseño de Sistemas de Información
 
 Y a la cátedra de Sintaxis y Semántica de los Lenguajes (Ing. Jorge Buabud), cuyo material de clases y trabajos prácticos es la base de todo el contenido.
 

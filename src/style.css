@@ -387,3 +387,9 @@ label.inline { display: inline-flex; gap: 6px; align-items: center; font-size: 0
 .read-mark { display: flex; justify-content: flex-end; }
 .hide { display: none !important; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+.copt { width: 100%; text-align: left; font: inherit; color: var(--ink); align-items: center; }
+.copt:disabled { cursor: default; }
+.copt .ol { font-family: var(--f-mono); font-size: 0.8rem; font-weight: 600; min-width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; flex: none; }
+.copt.is-right .ol { border-color: var(--ok); color: var(--ok); }
+.copt.is-wrong .ol { border-color: var(--bad); color: var(--bad); }

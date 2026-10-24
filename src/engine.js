@@ -535,7 +535,7 @@
       return '<label class="block' + (l.id === last ? " strong" : "") + '" style="cursor:pointer"><span class="kicker">' + esc(l.code) + '</span><h3>' + esc(l.title) + '</h3><span class="chips"><span class="chip">' + l.cards.length + " cartas</span>" + (best[l.id] != null ? '<span class="chip ok">mejor: ' + best[l.id] + "%</span>" : "") + '</span><input type="radio" name="deck" value="' + l.id + '"' + (l.id === last ? " checked" : "") + ' style="position:absolute;opacity:0"></label>';
     }).join("") + "</div>" +
       '<div class="btns"><label class="inline">Cartas por ronda <select class="sel" id="nc"><option>5</option><option selected>8</option><option>12</option><option value="99">Todas</option></select></label><label class="inline">Tiempo por carta <select class="sel" id="tc"><option value="45">45 s</option><option value="60" selected>1 min</option><option value="90">1 min 30 s</option></select></label><button type="button" class="btn pri" id="go">Empezar ronda</button></div></section><div id="arena"></div>';
-    pageList("Cartas de laboratorio", "Simulador de evaluación", "Sale una carta y corre el reloj. Respondé en voz alta o anotá un esquema, como si estuvieras frente a la cátedra. Cuando termina el tiempo se muestra la respuesta esperada y te calificás.", h);
+    pageList("Cartas de laboratorio", "Simulador de evaluación", "Sale una carta con cuatro opciones y corre el reloj, como en la evaluación de la cátedra. Elegí la correcta antes de que se termine el tiempo: si no respondés, cuenta como incorrecta.", h);
     $$('input[name="deck"]', app).forEach(function (r) { r.closest("label").addEventListener("click", function () { $$(".deckpick .block", app).forEach(function (b) { b.classList.remove("strong"); }); r.closest("label").classList.add("strong"); r.checked = true; store.set("deck", r.value); }); });
     $("#go").addEventListener("click", function () {
       var id = $('input[name="deck"]:checked', app).value, lab = L.filter(function (l) { return l.id === id; })[0];
@@ -550,35 +550,41 @@
     function show() {
       clearInterval(tick);
       if (i >= deck.length) return end();
-      var c = deck[i], left = secs, revealed = false;
+      var c = deck[i], left = secs, done = false;
+      var ord = shuffle(c.o.map(function (_, k) { return k; }));
       ar.innerHTML = '<div class="arena"><div class="timer" id="tm"><div class="lbl"><span>Carta ' + (i + 1) + " de " + deck.length + '</span><span id="tl">' + fmt(left) + '</span></div><div class="bar"><div class="fill" id="tf"></div></div></div>' +
-        '<div class="card"><div class="ctop"><span>' + esc(lab.code) + "</span><span>" + esc(c.tag || "") + '</span></div><div class="cq">' + c.q + '</div><div class="ca hide" id="ans"><div><b>Respuesta esperada</b></div>' + blocks(Array.isArray(c.a) ? c.a : [c.a]) + "</div></div>" +
-        '<div class="btns" id="cb"><button type="button" class="btn pri" id="rv">Mostrar respuesta</button><button type="button" class="btn ghost" id="sk">Pasar</button></div></div>';
+        '<div class="card"><div class="ctop"><span>' + esc(lab.code) + "</span><span>" + esc(c.tag || "") + '</span></div><div class="cq">' + c.q + '</div>' +
+        '<div class="opts" id="co">' + ord.map(function (k, j) { return '<button type="button" class="opt copt" data-k="' + k + '"><span class="ol">' + "ABCD"[j] + "</span><span>" + c.o[k] + "</span></button>"; }).join("") + "</div>" +
+        '<div class="ca hide" id="ans"></div></div><div class="btns" id="cb"></div></div>';
       var tf = $("#tf"), tl = $("#tl"), tm = $("#tm");
-      function reveal(timeout) {
-        if (revealed) return; revealed = true; clearInterval(tick);
-        $("#ans").classList.remove("hide");
+      function answer(k, timeout) {
+        if (done) return; done = true; clearInterval(tick);
+        var ok = k === 0;
+        $$("#co .copt").forEach(function (b) { b.disabled = true; var bk = +b.dataset.k; if (bk === 0) b.classList.add("is-right"); else if (bk === k) b.classList.add("is-wrong"); });
         if (timeout) { tm.classList.add("out"); tl.textContent = "Tiempo"; }
-        $("#cb").innerHTML = '<span style="color:var(--muted);font-size:.92rem">¿Cómo te fue?</span><button type="button" class="btn ok" data-r="1">La sabía</button><button type="button" class="btn" data-r="0.5">A medias</button><button type="button" class="btn bad" data-r="0">No la sabía</button>';
-        $$("#cb [data-r]").forEach(function (b) { b.addEventListener("click", function () { res.push({ c: c, r: +b.dataset.r }); i++; show(); }); });
+        var ans = $("#ans"); ans.classList.remove("hide");
+        ans.innerHTML = "<div><b>" + (timeout ? "Se terminó el tiempo." : ok ? "Correcta." : "Incorrecta.") + "</b></div>" + (c.why ? "<p>" + c.why + "</p>" : "");
+        res.push({ c: c, r: ok ? 1 : 0, pick: k });
+        $("#cb").innerHTML = '<button type="button" class="btn pri" id="nx">' + (i + 1 < deck.length ? "Siguiente carta" : "Ver resultado") + "</button>";
+        $("#nx").addEventListener("click", function () { i++; show(); });
+        $("#nx").focus();
       }
+      $$("#co .copt").forEach(function (b) { b.addEventListener("click", function () { answer(+b.dataset.k, false); }); });
       tick = setInterval(function () {
         left -= 0.25;
         tf.style.width = Math.max(0, 100 * left / secs) + "%";
         tl.textContent = fmt(Math.ceil(left));
         if (left <= secs * 0.3) tm.classList.add("warn");
-        if (left <= 0) reveal(true);
+        if (left <= 0) answer(-1, true);
       }, 250);
-      $("#rv").addEventListener("click", function () { reveal(false); });
-      $("#sk").addEventListener("click", function () { revealed = true; res.push({ c: c, r: 0 }); i++; show(); });
     }
     function end() {
       clearInterval(tick);
       var s = 0; res.forEach(function (r) { s += r.r; });
       var pct = Math.round(100 * s / res.length);
       var best = store.get("best", {}); best[lab.id] = Math.max(best[lab.id] || 0, pct); store.set("best", best);
-      ar.innerHTML = '<div class="score"><span class="big">' + pct + "%</span><span>" + (pct >= 60 ? "Ronda aprobada." : "Repasá las cartas que no sabías y volvé a intentar.") + '</span></div><div class="quiz" style="margin-top:14px">' +
-        res.filter(function (r) { return r.r < 1; }).map(function (r) { return '<div class="qcard wrong"><div class="qt">' + esc(r.c.tag || "") + '</div><div class="q"><b>' + r.c.q + '</b></div><div class="why">' + blocks(Array.isArray(r.c.a) ? r.c.a : [r.c.a]) + "</div></div>"; }).join("") +
+      ar.innerHTML = '<div class="score"><span class="big">' + s + " / " + res.length + "</span><span>" + pct + "% · " + (pct >= 60 ? "Ronda aprobada." : "Repasá las cartas que fallaste y volvé a intentar.") + '</span></div><div class="quiz" style="margin-top:14px">' +
+        res.filter(function (r) { return r.r < 1; }).map(function (r) { return '<div class="qcard wrong"><div class="qt">' + esc(r.c.tag || "") + '</div><div class="q"><b>' + r.c.q + '</b></div><div class="why">' + (r.pick >= 0 ? "<p>Elegiste: " + r.c.o[r.pick] + "</p>" : "<p>Sin responder (se terminó el tiempo).</p>") + "<p><b>Correcta:</b> " + r.c.o[0] + "</p>" + (r.c.why ? "<p>" + r.c.why + "</p>" : "") + "</div></div>"; }).join("") +
         '</div><div class="btns" style="margin-top:14px"><button type="button" class="btn pri" id="again">Otra ronda</button></div>';
       $("#again").addEventListener("click", function () { runDeck(lab, n, secs); });
     }

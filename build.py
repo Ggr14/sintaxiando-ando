@@ -9,7 +9,7 @@ import pathlib
 ROOT = pathlib.Path(__file__).parent
 SRC = ROOT / "src"
 ORDER = ["init.js", "engine.js", "data/u1.js", "data/u2.js", "data/u3.js", "data/u4.js",
-         "data/labs.js", "data/parciales.js", "sims.js", "start.js"]
+         "data/labs.js", "data/cards.js", "data/parciales.js", "sims.js", "start.js"]
 
 css = (SRC / "style.css").read_text(encoding="utf-8")
 js = "\n;\n".join((SRC / f).read_text(encoding="utf-8") for f in ORDER)

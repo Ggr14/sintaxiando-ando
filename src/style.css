@@ -412,3 +412,6 @@ label.inline { display: inline-flex; gap: 6px; align-items: center; font-size: 0
 .exchip.on { outline: 2px solid var(--accent); }
 
 @media (max-width: 640px) { .edhint { min-height: 7.5em; } .edcanvas { overflow-x: auto; } .edcanvas svg { width: 600px !important; max-width: none; } }
+
+.cq code, .copt code, .qcard code, .why code { font-family: var(--f-mono); font-size: .88em; background: var(--sunk); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.copt code { font-size: .85rem; }

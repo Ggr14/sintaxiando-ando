@@ -534,12 +534,16 @@
     var h = '<section class="sec"><h2>Elegí el mazo</h2><div class="deckpick">' + L.map(function (l) {
       return '<label class="block' + (l.id === last ? " strong" : "") + '" style="cursor:pointer"><span class="kicker">' + esc(l.code) + '</span><h3>' + esc(l.title) + '</h3><span class="chips"><span class="chip">' + l.cards.length + " cartas</span>" + (best[l.id] != null ? '<span class="chip ok">mejor: ' + best[l.id] + "%</span>" : "") + '</span><input type="radio" name="deck" value="' + l.id + '"' + (l.id === last ? " checked" : "") + ' style="position:absolute;opacity:0"></label>';
     }).join("") + "</div>" +
-      '<div class="btns"><label class="inline">Cartas por ronda <select class="sel" id="nc"><option>5</option><option selected>8</option><option>12</option><option value="99">Todas</option></select></label><label class="inline">Tiempo por carta <select class="sel" id="tc"><option value="45">45 s</option><option value="60" selected>1 min</option><option value="90">1 min 30 s</option></select></label><button type="button" class="btn pri" id="go">Empezar ronda</button></div></section><div id="arena"></div>';
+      '<div class="btns"><label class="inline">Cartas por ronda <select class="sel" id="nc"><option>5</option><option selected>8</option><option>12</option><option value="99">Todas</option></select></label><label class="inline">Tiempo por carta <select class="sel" id="tc"><option value="45">45 s</option><option value="60" selected>1 min</option><option value="90">1 min 30 s</option></select></label><label class="inline">Qué cartas <select class="sel" id="mc"><option value="all">Todo el mazo</option><option value="tom">Solo las tomadas en defensas</option><option value="miss">Solo las que fallé</option></select></label><button type="button" class="btn pri" id="go">Empezar ronda</button></div></section><div id="arena"></div>';
     pageList("Cartas de laboratorio", "Simulador de evaluación", "Sale una carta con cuatro opciones y corre el reloj, como en la evaluación de la cátedra. Elegí la correcta antes de que se termine el tiempo: si no respondés, cuenta como incorrecta.", h);
     $$('input[name="deck"]', app).forEach(function (r) { r.closest("label").addEventListener("click", function () { $$(".deckpick .block", app).forEach(function (b) { b.classList.remove("strong"); }); r.closest("label").classList.add("strong"); r.checked = true; store.set("deck", r.value); }); });
     $("#go").addEventListener("click", function () {
       var id = $('input[name="deck"]:checked', app).value, lab = L.filter(function (l) { return l.id === id; })[0];
-      runDeck(lab, +$("#nc").value, +$("#tc").value);
+      var mode = $("#mc").value, miss = store.get("miss", {})[lab.id] || {}, cards = lab.cards;
+      if (mode === "tom") cards = cards.filter(function (c) { return /^Tomada/.test(c.tag || ""); });
+      if (mode === "miss") cards = cards.filter(function (c) { return miss[c.q]; });
+      if (!cards.length) { $("#arena").innerHTML = '<p class="empty">' + (mode === "miss" ? "No tenés cartas falladas en este mazo. ¡Bien!" : "Este mazo todavía no tiene cartas tomadas en defensas.") + "</p>"; return; }
+      runDeck({ id: lab.id, code: lab.code, cards: cards }, +$("#nc").value, +$("#tc").value);
     });
   }
   var tick = null;
@@ -582,6 +586,8 @@
       clearInterval(tick);
       var s = 0; res.forEach(function (r) { s += r.r; });
       var pct = Math.round(100 * s / res.length);
+      var mm = store.get("miss", {}), lm = mm[lab.id] = mm[lab.id] || {};
+      res.forEach(function (r) { if (r.r < 1) lm[r.c.q] = 1; else delete lm[r.c.q]; }); store.set("miss", mm);
       var best = store.get("best", {}); best[lab.id] = Math.max(best[lab.id] || 0, pct); store.set("best", best);
       ar.innerHTML = '<div class="score"><span class="big">' + s + " / " + res.length + "</span><span>" + pct + "% · " + (pct >= 60 ? "Ronda aprobada." : "Repasá las cartas que fallaste y volvé a intentar.") + '</span></div><div class="quiz" style="margin-top:14px">' +
         res.filter(function (r) { return r.r < 1; }).map(function (r) { return '<div class="qcard wrong"><div class="qt">' + esc(r.c.tag || "") + '</div><div class="q"><b>' + r.c.q + '</b></div><div class="why">' + (r.pick >= 0 ? "<p>Elegiste: " + r.c.o[r.pick] + "</p>" : "<p>Sin responder (se terminó el tiempo).</p>") + "<p><b>Correcta:</b> " + r.c.o[0] + "</p>" + (r.c.why ? "<p>" + r.c.why + "</p>" : "") + "</div></div>"; }).join("") +

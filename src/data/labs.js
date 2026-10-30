@@ -75,6 +75,33 @@
       { ex: "Estructura de un archivo Cup", b: [{ f: "import java_cup.runtime.*;\nparser code {: public void syntax_error(Symbol s) { … } :};\n\nterminal SELECT, FROM, WHERE, INSERT, INTO, VALUES, UPDATE, SET, DELETE;\nterminal COMA, PCOMA, PAR_A, PAR_C, IGUAL, ID, NUM, CADENA;\nnon terminal programa, sentencia, lista_campos, lista_valores, condicion;\n\nstart with programa;\n\nprograma  ::= programa sentencia | sentencia ;\nsentencia ::= SELECT lista_campos FROM ID PCOMA\n            | SELECT lista_campos FROM ID WHERE condicion PCOMA\n            | DELETE FROM ID WHERE condicion PCOMA ;\nlista_campos ::= lista_campos COMA ID | ID ;" }] },
       { f: "⟨select⟩ ::= SELECT ( * | ⟨campo⟩ { , ⟨campo⟩ } ) FROM ⟨tabla⟩ { , ⟨tabla⟩ } [ WHERE ⟨cond⟩ ] [ ORDER BY ⟨campo⟩ ] ;\n⟨insert⟩ ::= INSERT INTO ⟨tabla⟩ [ ( ⟨campo⟩ { , ⟨campo⟩ } ) ] VALUES ( ⟨valor⟩ { , ⟨valor⟩ } ) ;\n⟨update⟩ ::= UPDATE ⟨tabla⟩ SET ⟨campo⟩ = ⟨valor⟩ { , ⟨campo⟩ = ⟨valor⟩ } [ WHERE ⟨cond⟩ ] ;\n⟨delete⟩ ::= DELETE FROM ⟨tabla⟩ [ WHERE ⟨cond⟩ ] ;" },
       { tree: "sentencia( SELECT lista_campos( lista_campos(ID) COMA ID ) FROM ID PCOMA )", gx: 66, cap: "Árbol sintáctico de SELECT nombre, edad FROM alumnos ;" },
+      { html: "<h3 id=\"lab2-cartas\">Qué toman en las cartas (defensa del 29/10)</h3>" },
+      { p: "Las cartas tomadas el 29/10 siguen el banco de preguntas de JLex y CUP, pero con otra numeración y varias aplicadas al código. Tipos de pregunta que salieron:" },
+      { table: { h: ["Tipo", "Ejemplo que salió", "Qué hay que saber"], r: [
+        ["Elegir la línea de código correcta", "Cómo se instancia el scanner en Main.java", "Escaner = new Lexico(new StringReader(args[0])); oParser = new Parser(Escaner); oParser.parse();"],
+        ["Elegir la producción CUP correcta", "Lista de columnas separadas por coma", "lista ::= ID | lista COMA ID ; — BNF pura: CUP no acepta * ni ( )*"],
+        ["Elegir la expresión regular correcta", "ER para identificadores de tablas y columnas", "[a-zA-Z_][a-zA-Z0-9_]*"],
+        ["Palabras clave y variables de CUP", "Con qué palabra se declaran los símbolos del scanner; para qué sirve RESULT", "terminal / non terminal; RESULT = valor del no terminal del lado izquierdo"],
+        ["Salida de las herramientas", "Qué muestra el resumen de generación de CUP", "Terminales, no terminales, producciones, estados y conflictos"],
+        ["Arquitectura del compilador", "Entrada y salida del análisis léxico", "Caracteres → tokens (léxico); tokens → árbol (sintáctico)"]] } },
+      { note: "Los distractores mezclan opciones absurdas con otras casi correctas: una coma de más en la producción, notación de EBNF que CUP no acepta, métodos que no existen (Lexico.open, CUP.createLexer). Leé las cuatro antes de elegir." },
+      { ex: "Main.java de la calculadora (calc.rar)", b: [{ f: "package calculadora;\nimport java.io.StringReader;\n\npublic class Main {\n  public static void main(String[] args) {\n    Lexico Escaner = null;\n    Parser oParser = null;\n    try {\n      Escaner = new Lexico(new StringReader(args[0]));  // scanner sobre el texto\n      oParser = new Parser(Escaner);                   // el parser recibe el scanner\n      oParser.parse();                                 // pedir token → shift/reduce\n    } catch (Exception ex) {\n      System.out.println(ex.toString());\n    }\n  }\n}" }] },
+      { ex: "Construir y ejecutar la calculadora", b: [{ f: "java JLex.Main calc_lex.java          → calc_lex.java.java (clase Lexico)\njava -jar java-cup-11b.jar -parser Parser -symbols Simbolos calc_cup.java\n                                       → Parser.java + Simbolos.java + resumen\njavac -cp java-cup-11b-runtime.jar calculadora/*.java\njava -cp java-cup-11b-runtime.jar;. calculadora.Main \"2+3*4\"   →  = 14;" }] },
+      { table: { h: ["En CUP", "Para qué sirve"], r: [
+        ["terminal / non terminal", "Declarar los tokens que entrega el scanner / las estructuras que arma el parser (con tipo opcional: terminal Integer NUMBER;)"],
+        ["precedence left|right|nonassoc", "Prioridad y asociatividad; lo declarado más abajo tiene más precedencia"],
+        ["start with", "Símbolo inicial de la gramática"],
+        ["{: … :}", "Código Java de una acción semántica; RESULT = valor del lado izquierdo; etiquetas expr:e1 para leer valores"],
+        ["parser code / action code", "Código que se agrega a la clase del parser / a la clase de acciones"],
+        ["init with / scan with", "Código antes del primer token / cómo pedir el próximo Symbol"],
+        ["-parser / -symbols / -expect", "Nombre de la clase del parser / de símbolos / conflictos tolerados"]] } },
+      { table: { h: ["En JLex", "Para qué sirve"], r: [
+        ["%class Lexico", "Nombre de la clase del scanner"],
+        ["%cup", "Implementa java_cup.runtime.Scanner: next_token() devuelve Symbol"],
+        ["%ignorecase · %line · %char · %state", "Sin distinguir mayúsculas · contar líneas · contar caracteres · estados léxicos"],
+        ["%{ … %} · %eofval{ … %eofval}", "Código Java dentro de la clase · qué devolver al fin de archivo"],
+        ["yytext() · yylength() · yybegin(E)", "Lexema reconocido · su largo · cambiar de estado léxico"],
+        ["Máxima coincidencia y orden", "Gana el lexema más largo; si empatan, la regla escrita primero (palabras reservadas antes que ID)"]] } },
       { note: "Material de la cátedra: guía de instalación de JLex, Cup, JDK y NetBeans; sintaxis de los archivos fuente; sintaxis ANSI del LMD; ejemplos calc y lenguaje hipotético C0." }
     ],
     cards: [

@@ -259,6 +259,8 @@
     h += '<div class="qcard" data-i="' + i + '" id="' + id + '"><div class="qh"><span class="qt">' + (opts.num ? (i + 1) + ") " : "") + type + (q.kind ? " · " + q.kind : "") + "</span>" + (q.pts ? '<span class="pts">' + q.pts + " pts</span>" : "") + "</div>";
     h += '<div class="q">' + q.q + "</div>";
     if (q.fig) h += blocks([q.fig]);
+    if (q.img) [].concat(q.img).forEach(function (k) { var src = (window.SSL.qimg || {})[k]; if (src) h += '<figure class="qimg"><img src="' + src + '" alt="Figura de la consigna" loading="lazy"></figure>'; });
+    if (q.src && opts.src) h += '<div class="qsrc">Quiz ' + q.src + "</div>";
     if (q.t === "vf") h += '<div class="vf"><button type="button" class="btn" data-v="1">V</button><button type="button" class="btn" data-v="0">F</button></div>';
     if (q.t === "mc" || q.t === "x") {
       var order = q._ord || (q._ord = q.noShuffle ? q.o.map(function (_, k) { return k; }) : shuffle(q.o.map(function (_, k) { return k; })));
@@ -267,7 +269,7 @@
     if (q.t === "match") {
       var choices = q.opts;
       var items = q._items || (q._items = q.keep ? q.items : shuffle(q.items));
-      h += '<div class="match">' + items.map(function (it, k) { return '<div class="l">' + it[0] + '</div><select class="sel" data-k="' + k + '"><option value="">—</option>' + choices.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + "</option>"; }).join("") + "</select>"; }).join("") + "</div>";
+      h += '<div class="match">' + items.map(function (it, k) { return '<div class="l">' + it[0] + '</div><select class="sel" data-k="' + k + '"><option value="">—</option>' + (it[2] || choices).map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + "</option>"; }).join("") + "</select>"; }).join("") + "</div>";
     }
     if (q.t === "fill") h += '<div class="fill">' + q.blanks.map(function (b, k) { return '<div class="row"><span class="k">' + b.k + '</span><input class="txt mono" data-k="' + k + '" type="text" autocomplete="off" spellcheck="false" style="flex:1;min-width:160px"></div>'; }).join("") + "</div>";
     if (q.t === "open") h += '<textarea class="txt mono" placeholder="Escribí tu resolución o un esquema (opcional)"></textarea>';
@@ -466,14 +468,14 @@
     }
     var h = '<div class="page solo"><div class="main">';
     h += '<div class="hero"><div class="head"><div class="kicker">Sintaxis y Semántica de los Lenguajes · UTN FRT · 2026</div><h1>Sintaxiando <em>Ando</em></h1><p class="lede">Teoría con las definiciones tal cual las toma la cátedra, gráficos de autómatas y cintas que se mueven, defensas de TP, cartas de laboratorio con tiempo y simulacros con el formato del parcial de este año.</p>' +
-      '<div class="btns"><a class="btn pri" href="#cartas">Rendir cartas de laboratorio</a><a class="btn" href="#simulacro">Simulacro de parcial</a><a class="btn" href="#practica">Dibujar y corregir autómatas</a><a class="btn ghost" href="#modelo">Parcial 2026 resuelto</a></div></div>' +
+      '<div class="btns"><a class="btn pri" href="#cartas">Rendir cartas de laboratorio</a><a class="btn" href="#simulacro">Simulacro de parcial</a><a class="btn" href="#quizzes">Quizzes de la cátedra</a><a class="btn" href="#practica">Dibujar y corregir autómatas</a><a class="btn ghost" href="#modelo">Parcial 2026 resuelto</a></div></div>' +
       '<div class="demo"><div data-sim="hero-afd"></div></div></div>';
     h += '<section class="sec"><h2>Primer parcial</h2><p class="lede" style="font-size:1rem">Unidades 1 y 2, teoría y práctica. Laboratorio 1: MEF del ascensor con Arduino.</p><div class="grid2">' + unitIdx(u[0]) + unitIdx(u[1]) + "</div></section>";
     h += '<section class="sec"><h2>Segundo parcial</h2><p class="lede" style="font-size:1rem">Unidades 3 y 4, teoría y práctica. Laboratorio 2: parser de SQL con JLex y Cup.</p><div class="grid2">' + unitIdx(u[2]) + unitIdx(u[3]) + "</div></section>";
     h += '<section class="sec"><h2>Cómo se evalúa este año</h2><div class="grid3">' +
       '<div class="block"><h3>Defensas de TP</h3><p>Mini parcial con un enunciado de la parte <b>"Problemas a resolver por los alumnos"</b> elegido por la cátedra.</p><a class="btn" href="#defensas">Practicar defensas</a></div>' +
       '<div class="block"><h3>Laboratorios</h3><p>Cartas con preguntas teóricas sobre el enunciado del laboratorio y temas relacionados. Un minuto por carta.</p><a class="btn" href="#labs">Ver laboratorios</a></div>' +
-      '<div class="block"><h3>Parciales</h3><p>Teoría estilo Tema C: V/F con definiciones alteradas, emparejar, completar, marcar con X. Más ejercicios prácticos.</p><a class="btn" href="#simulacro">Hacer un simulacro</a></div>' +
+      '<div class="block"><h3>Parciales</h3><p>Teórico-prácticos. La teoría sale de los quizzes finales del año pasado, tal cual; la práctica, del estilo de los parciales 2021.</p><div class="btns"><a class="btn" href="#simulacro">Hacer un simulacro</a><a class="btn ghost" href="#quizzes">Ver quizzes</a></div></div>' +
       "</div></section>";
     h += foot() + "</div></div>";
     app.innerHTML = h;
@@ -620,10 +622,43 @@
   /* ---------- simulacros ---------- */
   function pageSimulacro() {
     var h = '<section class="sec"><h2>Elegí el parcial</h2><div class="grid2">' + SSL.parciales.map(function (p) {
-      return '<div class="block strong"><span class="kicker">' + esc(p.units) + "</span><h3>" + esc(p.title) + '</h3><p style="color:var(--muted)">' + p.desc + '</p><div class="btns"><button type="button" class="btn pri" data-p="' + p.id + '">Generar tema</button></div></div>';
-    }).join("") + "</div></section><div id=\"exam\"></div>";
-    pageList("Simulacro de parcial", "Formato 2026", "Cada tema se arma al azar con la misma estructura y puntaje que el Tema C del primer parcial 2026: nueve ítems de teoría (2 puntos en total) y cuatro ejercicios prácticos de 2 puntos cada uno. La teoría se corrige sola; la práctica la autoevaluás con la resolución.", h);
-    $$("[data-p]", app).forEach(function (b) { b.addEventListener("click", function () { var p = SSL.parciales.filter(function (x) { return x.id === b.dataset.p; })[0]; var ex = $("#exam"); var gen = function () { return p.make(); }; ex.innerHTML = '<div class="head" style="margin:10px 0 14px"><div class="kicker">' + esc(p.title) + " · tema generado</div></div><div id=\"exq\"></div>"; mountQuiz($("#exq"), gen(), { num: false, scale: 10, regen: gen }); ex.scrollIntoView({ behavior: "smooth" }); }); });
+      return '<div class="block strong"><span class="kicker">' + esc(p.units) + "</span><h3>" + esc(p.title) + '</h3><p style="color:var(--muted)">' + p.desc + '</p><div class="btns"><button type="button" class="btn pri" data-p="' + p.id + '">Generar simulacro</button></div></div>';
+    }).join("") + '</div><div class="btns"><label class="inline">Tiempo <select class="sel" id="st"><option value="0">Sin reloj</option><option value="90">1 h 30 min</option><option value="120" selected>2 horas</option><option value="150">2 h 30 min</option></select></label></div></section><div id="exam"></div>';
+    pageList("Simulacro de parcial", "Teórico-práctico", "Los parciales son teórico-prácticos. La <b>teoría</b> se arma con preguntas de los <b>quizzes finales que tomó la cátedra el año pasado</b>, tal como estaban (12 preguntas, 4 puntos). La <b>práctica</b> sigue el estilo de los parciales 2021: tres ejercicios de 2 puntos que resolvés en papel y autoevaluás con la resolución. Cada simulacro sale distinto.", h);
+    $$("[data-p]", app).forEach(function (b) { b.addEventListener("click", function () {
+      var p = SSL.parciales.filter(function (x) { return x.id === b.dataset.p; })[0], ex = $("#exam"), mins = +$("#st").value;
+      var gen = function () { return p.make(); };
+      ex.innerHTML = '<div class="head" style="margin:10px 0 14px"><div class="kicker">' + esc(p.title) + " · simulacro generado</div></div>" + (mins ? '<div class="timer" id="tm" style="width:100%;margin-bottom:12px"><div class="lbl"><span>Tiempo restante</span><span id="tl">' + fmt(mins * 60) + '</span></div><div class="bar"><div class="fill" id="tf"></div></div></div>' : "") + '<div id="exq"></div>';
+      mountQuiz($("#exq"), gen(), { num: true, scale: 10, regen: gen });
+      clearInterval(tick);
+      if (mins) { var left = mins * 60, tf = $("#tf"), tl = $("#tl"), tm = $("#tm"); tick = setInterval(function () { left--; tf.style.width = (100 * left / (mins * 60)) + "%"; tl.textContent = fmt(left); if (left < mins * 12) tm.classList.add("warn"); if (left <= 0) { clearInterval(tick); tm.classList.add("out"); tl.textContent = "Tiempo"; } }, 1000); }
+      ex.scrollIntoView({ behavior: "smooth" });
+    }); });
+  }
+  function pageQuizzes() {
+    var Z = SSL.quizzes.slice().sort(function (a, b) { return a.n - b.n; });
+    var groups = [[1, 2, "Primer parcial · Unidades 1 y 2"], [3, 4, "Segundo parcial · Unidades 3 y 4"]];
+    var h = '<div class="prose"><p>Son los quizzes finales que tomó la cátedra el año pasado, cargados con las mismas preguntas y la respuesta que dio por correcta. Cuando la clave de la cátedra parece discutible se deja igual y se aclara en la explicación. Las preguntas de los simulacros salen de acá.</p></div>';
+    h += '<div class="btns" style="margin:10px 0 4px"><button type="button" class="btn pri" data-mix="1">Mezcla de 20 · Unidades 1 y 2</button><button type="button" class="btn pri" data-mix="3">Mezcla de 20 · Unidades 3 y 4</button></div>';
+    groups.forEach(function (g) {
+      var list = Z.filter(function (z) { return z.u === g[0] || z.u === g[1]; });
+      h += '<section class="sec"><h2>' + g[2] + '</h2><ul class="idx">' + list.map(function (z) { return '<li><a href="#quizzes-' + z.n + '"><span>Quiz ' + z.n + " · " + esc(z.title) + '</span><span class="meta">' + z.qs.length + " preg." + (prog.qz && prog.qz[z.n] != null ? " · " + prog.qz[z.n] + "%" : "") + "</span></a></li>"; }).join("") + "</ul></section>";
+    });
+    pageList("Quizzes de la cátedra", "Teoría para los parciales", "Practicá cada quiz tal como se tomó, o una mezcla al azar por parcial.", h);
+    $$("[data-mix]", app).forEach(function (b) { b.addEventListener("click", function () {
+      var u = +b.dataset.mix, pool = []; Z.forEach(function (z) { if (z.u === u || z.u === u + 1) pool = pool.concat(z.qs); });
+      var gen = function () { return pick(pool, 20); };
+      app.querySelector(".main").innerHTML = '<div class="head"><div class="kicker"><a href="#quizzes">Quizzes</a> · mezcla</div><h1>Mezcla · Unidades ' + u + " y " + (u + 1) + '</h1><p class="lede">20 preguntas al azar de todos los quizzes del parcial.</p></div><div id="qz"></div>' + foot();
+      mountQuiz($("#qz"), gen(), { num: true, src: true, regen: gen, scrollToWrong: true }); window.scrollTo(0, 0);
+    }); });
+  }
+  function pageQuiz(n) {
+    var z = SSL.quizzes.filter(function (x) { return x.n === n; })[0];
+    if (!z) return pageQuizzes();
+    var Z = SSL.quizzes.map(function (x) { return x.n; }).sort(function (a, b) { return a - b; }), i = Z.indexOf(n);
+    var nav = '<div class="btns" style="margin-top:18px">' + (i > 0 ? '<a class="btn" href="#quizzes-' + Z[i - 1] + '">← Quiz ' + Z[i - 1] + "</a>" : "") + '<a class="btn ghost" href="#quizzes">Todos los quizzes</a>' + (i < Z.length - 1 ? '<a class="btn" href="#quizzes-' + Z[i + 1] + '">Quiz ' + Z[i + 1] + " →</a>" : "") + "</div>";
+    pageList("Quiz " + z.n + " · " + esc(z.title), "Unidad " + z.u + " · quiz de la cátedra", z.qs.length + " preguntas, tal como se tomaron. Respondé todas y tocá Corregir.", '<div id="qz"></div>' + nav);
+    mountQuiz($("#qz"), z.qs, { num: true, scrollToWrong: true, onDone: function (pct) { prog.qz = prog.qz || {}; prog.qz[n] = Math.max(prog.qz[n] || 0, pct); saveProg(); } });
   }
   function pageModelo() {
     var m = SSL.modelo;
@@ -673,6 +708,7 @@
     if (base === "cartas") return pageCartas();
     if (base === "defensas") return pageDefensas();
     if (base === "simulacro") return pageSimulacro();
+    if (base === "quizzes") return h.indexOf("-") > 0 ? pageQuiz(+h.split("-")[1]) : pageQuizzes();
     if (base === "modelo") return pageModelo();
     if (base === "practica" && SSL.pagePractica) { SSL.pagePractica(h.slice(9)); window.scrollTo(0, 0); return; }
     pageHome(); window.scrollTo(0, 0);

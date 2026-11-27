@@ -415,3 +415,10 @@ label.inline { display: inline-flex; gap: 6px; align-items: center; font-size: 0
 
 .cq code, .copt code, .qcard code, .why code { font-family: var(--f-mono); font-size: .88em; background: var(--sunk); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
 .copt code { font-size: .85rem; }
+
+/* quizzes de la cátedra */
+.qpre{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.86rem;line-height:1.45;background:var(--paper2,rgba(127,127,127,.08));border:1px solid var(--line,rgba(127,127,127,.25));border-radius:8px;padding:10px 12px;margin:10px 0;overflow-x:auto;white-space:pre}
+.qimg{margin:10px 0;text-align:center}
+.qimg img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line,rgba(127,127,127,.25));background:#fff}
+.qsrc{display:inline-block;font-size:.75rem;color:var(--muted);border:1px solid var(--line,rgba(127,127,127,.25));border-radius:99px;padding:1px 8px;margin:6px 0}
+.match select.sel{max-width:100%}

@@ -21,10 +21,11 @@ El contenido está organizado igual que la materia:
 - **Laboratorios**: la teoría de cada enunciado (MEF del ascensor con Arduino, parser de SQL con JLex y Cup, proceso de compilación con GCC) y un simulador del ascensor con la tabla de transición y el display de 7 segmentos.
 - **Cartas de laboratorio**: un simulador de la evaluación con preguntas de opción múltiple y un minuto por carta. Al final muestra el puntaje y repasa las que se fallaron.
 - **Defensas de TP**: sale al azar un enunciado de la parte "Problemas a resolver por los alumnos", con reloj, y después se compara con la resolución.
-- **Simulacros de parcial** con la misma estructura y puntaje que el primer parcial 2026 (Tema C). Cada simulacro es un tema distinto, armado al azar. Además está el Tema C resuelto.
+- **Quizzes de la cátedra**: los quizzes finales del año pasado (1 a 44, unidades 1 a 4) cargados tal como se tomaron, con la respuesta que la cátedra dio por correcta. Se pueden hacer uno por uno o en mezclas de 20 preguntas por parcial. Cuando la clave de la cátedra parece discutible, se deja igual y se aclara en la explicación.
+- **Simulacros de parcial teórico-prácticos**: la teoría son 12 preguntas sacadas tal cual de los quizzes (4 puntos) y la práctica son tres ejercicios al estilo de los parciales 2021 (6 puntos), con reloj opcional. Cada simulacro sale distinto. Además está el Tema C 2026 resuelto.
 - **Control de lectura** al final de cada unidad, con preguntas de teoría y de práctica.
 
-El progreso (secciones leídas, controles aprobados y mejor puntaje en cartas) se guarda en el navegador de cada persona.
+El progreso (secciones leídas, controles aprobados, mejor puntaje en cartas y en cada quiz) se guarda en el navegador de cada persona.
 
 Las resoluciones de los ejercicios para alumnos son propias y están marcadas como sugeridas; muchas se verificaron con programas (minimizaciones, gramáticas, autómatas de pila y máquinas de Turing). Ante cualquier duda, manda el criterio de la cátedra.
 

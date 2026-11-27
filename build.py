@@ -9,10 +9,18 @@ import pathlib
 ROOT = pathlib.Path(__file__).parent
 SRC = ROOT / "src"
 ORDER = ["init.js", "engine.js", "data/u1.js", "data/u2.js", "data/u3.js", "data/u4.js",
-         "data/labs.js", "data/lab2deck.js", "data/cards.js", "data/parciales.js", "sims.js", "editor.js", "start.js"]
+         "data/labs.js", "data/lab2deck.js", "data/cards.js", "data/quizzes.js", "data/quizzes1.js", "data/parciales.js", "sims.js", "editor.js", "start.js"]
 
 css = (SRC / "style.css").read_text(encoding="utf-8")
-js = "\n;\n".join((SRC / f).read_text(encoding="utf-8") for f in ORDER)
+import base64, json
+qimg = {}
+for f in sorted((SRC / "qimg").glob("*")):
+    mime = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp"}.get(f.suffix.lower())
+    if mime:
+        qimg[f.stem] = "data:" + mime + ";base64," + base64.b64encode(f.read_bytes()).decode()
+parts = [(SRC / f).read_text(encoding="utf-8") for f in ORDER]
+parts.insert(ORDER.index("data/quizzes.js"), "window.SSL.qimg = " + json.dumps(qimg) + ";")
+js = "\n;\n".join(parts)
 js = js.replace("</script", "<\\/script")
 shell = (SRC / "shell.html").read_text(encoding="utf-8")
 body = shell.replace("{{CSS}}", css).replace("{{JS}}", js)
